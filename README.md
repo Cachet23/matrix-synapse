@@ -85,8 +85,8 @@ curl -s http://localhost:8008/health
 ├── docker-compose.override.yml # Internal interface bindings (gitignored!)
 ├── backup.sh                  # Daily backup script
 ├── README.md                  # This file
-├── DEPLOYMENT.md              # Full step-by-step playbook
 ├── docs/
+│   ├── DEPLOYMENT.md          # Full step-by-step playbook
 │   └── bot-connection.md      # How to connect bots internally (3 topologies)
 ├── assets/                    # Banner + architecture diagram
 ├── backups/                   # Backup archive (gitignored)
@@ -98,7 +98,7 @@ curl -s http://localhost:8008/health
 
 ## Documentation
 
-- **[DEPLOYMENT.md](./DEPLOYMENT.md)** — Full step-by-step playbook (Cloudflare Tunnel, Synapse config, user creation, `.well-known`, Element client setup, migration, pitfalls)
+- **[docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md)** — Full step-by-step playbook (Cloudflare Tunnel, Synapse config, user creation, `.well-known`, Element client setup, migration, pitfalls)
 - **[docs/bot-connection.md](./docs/bot-connection.md)** — Connect bot gateways (OpenClaw, Hermes, mautrix) to Synapse **without routing tokens through Cloudflare** (3 topologies + pitfalls)
 
 ## Who is this for?
