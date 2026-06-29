@@ -35,9 +35,13 @@
   <!-- arrowhead -->
   <polygon points="180,195 176,189 184,189" fill="#b45309"/>
 
-  <!-- Arrow: CF → Synapse (across zones) -->
-  <path d="M 180 245 L 180 280 L 400 280 L 400 310" stroke="#b45309" stroke-width="2" fill="none" stroke-dasharray="8 4"/>
-  <polygon points="400,310 396,304 404,304" fill="#b45309"/>
+  <!-- Arrow: CF Tunnel → cloudflared (orange, crosses zone boundary) -->
+  <path d="M 180 245 L 180 287 L 470 287" stroke="#b45309" stroke-width="2" fill="none" stroke-dasharray="8 4"/>
+  <polygon points="470,287 464,283 464,291" fill="#b45309"/>
+
+  <!-- Arrow: cloudflared → Synapse (gray, local service connection) -->
+  <path d="M 550 265 L 550 250 L 430 250 L 430 135 L 470 135" stroke="#94a3b8" stroke-width="1.5" fill="none"/>
+  <polygon points="470,135 464,131 464,139" fill="#94a3b8"/>
 
   <!-- ═════════════════════════════════════════════════════ -->
   <!-- Zone: Internal Network — right column                   -->
@@ -63,9 +67,7 @@
   <text x="550" y="285" text-anchor="middle" font-size="13" font-weight="650" fill="#e5e7eb">cloudflared</text>
   <text x="550" y="300" text-anchor="middle" font-size="10" fill="#a3adbd">systemd service</text>
 
-  <!-- Arrow: CF Tunnel → cloudflared -->
-  <path d="M 180 245 L 180 275 L 470 275 L 550 275 L 550 265" stroke="#94a3b8" stroke-width="1.5" fill="none"/>
-  <polygon points="550,265 546,271 554,271" fill="#94a3b8"/>
+  <!-- (cloudflared connection now handled above) -->
 
   <!-- ═════════════════════════════════════════════════════ -->
   <!-- KVM Host zone                                            -->
