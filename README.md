@@ -37,7 +37,7 @@ Für Self-Hoster mit AI-Agenten (OpenClaw, Hermes, mautrix-basierte Bots) auf ei
 
 **Was Cloudflare nicht sieht:** Bots mit 24/7 `/sync`-Polling, deren Access-Tokens, Raum-Mitgliedschaften oder Bot-Existenz. Bot-Tokens verlassen nie den Host.
 
-![architecture](assets/architecture.svg)
+![architecture](assets/architecture.png)
 
 ## Features
 
