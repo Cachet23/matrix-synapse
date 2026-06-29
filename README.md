@@ -2,52 +2,27 @@
 
 ![banner](assets/banner.png)
 
-> **Unabhängiger verschlüsselter Messenger für alle, die eigene Infrastruktur betreiben.** Keine Limitierungen, keine dritten Parteien, keine offenen Ports. Eine Domain reicht.
+> **Independent encrypted messenger for anyone running their own infrastructure.** No limitations, no third parties, no open ports. Just a domain.
 
-Für Self-Hoster mit AI-Agenten (OpenClaw, Hermes, mautrix-basierte Bots) auf eigener Hardware: Synapse läuft auf deinem Server, Bots verbinden sich über das interne Netz, Mobile Clients über Cloudflare Tunnel. Volle Ende-zu-Ende-Verschlüsselung. Keine Cloud-Metadata.
+For self-hosters running AI agents (OpenClaw, Hermes, mautrix-based bots) on their own hardware: Synapse runs on your server, bots connect over the internal network, mobile clients come in through Cloudflare Tunnel. Full end-to-end encryption. No cloud metadata.
 
 ## Architecture
 
-```
-                        User Phone ───┐
-                                       │
-                        User Phone ───┼──► Cloudflare Tunnel ──► Synapse (:8008)
-                                       │    (TLS, no open ports)    │
-                                       │                            │
-                                       │     ┌──────────────────────┘
-                                       │     │ (internal, no CF)
-                                       │     │
-    Your Server (KVM host)             │     │
-    ┌──────────────────────┐           │     │
-    │  AI Agent (OpenClaw) ┼───────────┼─────┘   localhost:8008
-    │  Synapse + Postgres  │           │
-    │  Cloudflared         │           │
-    └──────────┬───────────┘           │
-               │ libvirt bridge        │
-               │ <internal-ip>:8008     │
-               │                       │
-    ┌──────────┴───────────┐           │
-    │  Guest VM (KVM)      │           │
-    │  AI Agent (Hermes) ───┼───────────┘   <internal-ip>:8008
-    │  (Hermes Gateway)     │
-    └──────────────────────┘
-```
-
-**Was Cloudflare sieht:** Handys mit unregelmäßigem Mobile-Traffic.
-
-**Was Cloudflare nicht sieht:** Bots mit 24/7 `/sync`-Polling, deren Access-Tokens, Raum-Mitgliedschaften oder Bot-Existenz. Bot-Tokens verlassen nie den Host.
-
 ![architecture](assets/architecture.png)
+
+**What Cloudflare sees:** Phones with irregular mobile traffic.
+
+**What Cloudflare doesn't see:** Bots with 24/7 `/sync`-polling, their access tokens, room memberships, or the mere existence of bots. Bot tokens never leave the host.
 
 ## Features
 
 - **Synapse + PostgreSQL** in Docker (localhost + internal interfaces only)
-- **Cloudflare Tunnel** — keine offenen Router-Ports, keine exponierte IP
+- **Cloudflare Tunnel** — no open router ports, no exposed IP
 - **E2E Encryption** — Olm/Megolm
-- **Bot-First Architecture** — Bots verbinden sich intern, niemals über CF
-- **Manual Registration** — keine offenen Signups
-- **Automated Backups** — täglich, GPG-verschlüsselt (AES256), 7 Tage Retention
-- **Federation Disabled** — Single-Server-Setup, keine externen Key-Server
+- **Bot-First Architecture** — bots connect internally, never via Cloudflare
+- **Manual Registration** — no open signups
+- **Automated Backups** — daily, GPG-encrypted (AES256), 7-day retention
+- **Federation Disabled** — single-server setup, no external key servers
 
 ## Quick Start
 
@@ -128,15 +103,15 @@ curl -s http://localhost:8008/health
 
 ## Who is this for?
 
-Du betreibst eigene Infrastruktur (dedicated server, KVM host, Home-Lab) und willst:
+You run your own infrastructure (dedicated server, KVM host, home lab) and want to:
 
-- **Unabhängig sein** von Discord, Telegram, WhatsApp — kein Account-Bann kann dich abschalten
-- **AI-Agenten** (OpenClaw, Hermes) über einen verschlüsselten Messenger kommunizieren lassen
-- **Vollständige Kontrolle** über Daten, Metadaten und Zugriffs-Tokens haben
-- **Keine Limitierungen** durch externe Plattformen — Rate-Limits, API-Änderungen, ToS
-- **Nur eine Domain** brauchen — sonst nichts. Keine teuren SaaS-Abos, kein Cloud-Provider-Lock-in
+- **Be independent** from Discord, Telegram, WhatsApp — no account ban can shut you down
+- **Let AI agents** (OpenClaw, Hermes) communicate over an encrypted messenger
+- **Have full control** over data, metadata, and access tokens
+- **No limitations** from external platforms — rate limits, API changes, ToS
+- **Only need a domain** — nothing else. No expensive SaaS subscriptions, no cloud provider lock-in
 
-Setup-Kosten: Eine Domain (~10€/Jahr) + ein Server den du schon hast. Cloudflare Tunnel ist kostenlos.
+Setup cost: One domain (~$10/year) + a server you already have. Cloudflare Tunnel is free.
 
 ---
 
