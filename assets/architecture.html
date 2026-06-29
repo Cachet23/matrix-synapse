@@ -1,0 +1,248 @@
+<!doctype html>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Architecture — Matrix Synapse Self-Hosted</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #0f172a;
+    --fg: #e5e7eb;
+    --muted: #a3adbd;
+    --line: #94a3b8;
+    --neutral: #334155;
+    --external: #92400e;
+    --process: #4338ca;
+    --storage: #0f766e;
+    --bot: #1e3a5f;
+    --cf: #b45309;
+    --phone: #6d28d9;
+    --synapse: #0f766e;
+    --intern: #166534;
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 14px/1.4 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  main {
+    max-width: 980px;
+    margin: 32px auto;
+    padding: 0 20px;
+  }
+  svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .title {
+    font-size: 20px;
+    font-weight: 700;
+    fill: var(--fg);
+  }
+  .label {
+    font-size: 15px;
+    font-weight: 650;
+    fill: var(--fg);
+  }
+  .small {
+    font-size: 12px;
+    fill: var(--muted);
+  }
+  .tiny {
+    font-size: 11px;
+    fill: var(--muted);
+    font-style: italic;
+  }
+  .node {
+    stroke: var(--line);
+    stroke-width: 1.5;
+    rx: 10;
+  }
+  .edge {
+    stroke: var(--line);
+    stroke-width: 1.5;
+    fill: none;
+  }
+  .edge-intern {
+    stroke: #22c55e;
+    stroke-width: 2;
+    fill: none;
+    stroke-dasharray: none;
+  }
+  .edge-cf {
+    stroke: var(--cf);
+    stroke-width: 2;
+    fill: none;
+    stroke-dasharray: 8 4;
+  }
+  .zone {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 1;
+    stroke-dasharray: 6 5;
+    opacity: 0.5;
+  }
+  .zone-intern {
+    fill: #16653422;
+    stroke: #22c55e;
+    stroke-width: 1;
+    stroke-dasharray: 5 3;
+    opacity: 0.4;
+  }
+  .zone-cf {
+    fill: #b4530918;
+    stroke: var(--cf);
+    stroke-width: 1;
+    stroke-dasharray: 5 3;
+    opacity: 0.4;
+  }
+</style>
+<main>
+<svg viewBox="0 0 940 620" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Title -->
+  <text x="470" y="30" text-anchor="middle" class="title">Matrix Synapse — Self-Hosted Infrastructure</text>
+  <text x="470" y="50" text-anchor="middle" class="small">Encrypted messaging for AI agents & humans on own hardware</text>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- Zone: Internet (Cloudflare path) -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <rect class="zone-cf" x="20" y="70" width="360" height="200" rx="12" />
+  <text x="40" y="92" class="small" fill="#b45309">☁️ External (via Cloudflare Tunnel)</text>
+
+  <!-- Phones -->
+  <rect class="node" x="40" y="110" width="150" height="60" fill="#6d28d9" rx="10" />
+  <text x="115" y="135" text-anchor="middle" class="label">📱 User Phone</text>
+  <text x="115" y="153" text-anchor="middle" class="small">Element X — E2EE</text>
+
+  <rect class="node" x="210" y="110" width="150" height="60" fill="#6d28d9" rx="10" />
+  <text x="285" y="135" text-anchor="middle" class="label">📱 User Phone</text>
+  <text x="285" y="153" text-anchor="middle" class="small">Element X — E2EE</text>
+
+  <!-- Cloudflare Tunnel -->
+  <rect class="node" x="80" y="200" width="240" height="50" fill="#b45309" rx="10" />
+  <text x="200" y="222" text-anchor="middle" class="label">☁️ Cloudflare Tunnel</text>
+  <text x="200" y="238" text-anchor="middle" class="small">TLS terminates • No open ports</text>
+
+  <!-- Arrows: Phones → CF -->
+  <path class="edge-cf" d="M 115 170 L 115 195 L 200 195 L 200 200" marker-end="url(#arrow-cf)" />
+  <path class="edge-cf" d="M 285 170 L 285 195 L 200 195" />
+
+  <!-- Arrow: CF → Synapse (crosses zone boundary) -->
+  <path class="edge-cf" d="M 200 250 L 200 310 L 380 310 L 380 340" marker-end="url(#arrow-cf)" />
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- Zone: Internal (no Cloudflare) -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <rect class="zone-intern" x="420" y="70" width="500" height="540" rx="12" />
+  <text x="440" y="92" class="small" fill="#22c55e">🔒 Internal Network (no Cloudflare, no TLS needed)</text>
+
+  <!-- Synapse + Postgres -->
+  <rect class="node" x="520" y="110" width="340" height="70" fill="#0f766e" rx="10" />
+  <text x="690" y="138" text-anchor="middle" class="label">🏠 Matrix Synapse</text>
+  <text x="690" y="156" text-anchor="middle" class="small">Docker • 127.0.0.1:8008 + internal interfaces</text>
+  <text x="690" y="172" text-anchor="middle" class="tiny">localhost + libvirt bridge / tailnet / LAN</text>
+
+  <!-- PostgreSQL -->
+  <rect class="node" x="560" y="210" width="260" height="45" fill="#334155" rx="10" />
+  <text x="690" y="238" text-anchor="middle" class="label">🗄️ PostgreSQL</text>
+
+  <!-- Arrow: Synapse → Postgres -->
+  <path class="edge" d="M 690 180 L 690 210" marker-end="url(#arrow)" />
+
+  <!-- Cloudflared -->
+  <rect class="node" x="520" y="290" width="150" height="45" fill="#b45309" rx="10" />
+  <text x="595" y="318" text-anchor="middle" class="label">cloudflared</text>
+  <text x="595" y="332" text-anchor="middle" class="tiny">systemd service</text>
+
+  <!-- Arrow: CF Tunnel → cloudflared (the tunnel endpoint) -->
+  <path class="edge" d="M 200 250 L 200 300 L 520 300 L 595 300 L 595 290" marker-end="url(#arrow)" />
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- KVM Host -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <rect class="zone" x="440" y="370" width="460" height="220" rx="12" />
+  <text x="460" y="390" class="small">🖥️ Your Server (KVM host)</text>
+
+  <!-- AI Agent 1 (OpenClaw) -->
+  <rect class="node" x="460" y="410" width="200" height="70" fill="#1e3a5f" rx="10" />
+  <text x="560" y="438" text-anchor="middle" class="label">🌙 AI Agent</text>
+  <text x="560" y="456" text-anchor="middle" class="small">OpenClaw Gateway</text>
+  <text x="560" y="470" text-anchor="middle" class="tiny">→ localhost:8008</text>
+
+  <!-- Arrow: Agent 1 → Synapse (internal, green) -->
+  <path class="edge-intern" d="M 560 410 L 560 380 L 690 380 L 690 180" marker-end="url(#arrow-intern)" />
+
+  <!-- Guest VM (KVM guest) -->
+  <rect class="zone" x="680" y="410" width="200" height="160" rx="12" />
+  <text x="700" y="430" class="small">📦 Guest VM (KVM)</text>
+
+  <!-- AI Agent 2 (Hermes) -->
+  <rect class="node" x="700" y="445" width="160" height="65" fill="#1e3a5f" rx="10" />
+  <text x="780" y="470" text-anchor="middle" class="label">⚡ AI Agent</text>
+  <text x="780" y="488" text-anchor="middle" class="small">Hermes Agent</text>
+  <text x="780" y="502" text-anchor="middle" class="tiny">→ internal-ip:8008</text>
+
+  <!-- Arrow: Agent 2 → Synapse (internal, green, through libvirt bridge) -->
+  <path class="edge-intern" d="M 780 445 L 780 380 L 690 380 L 690 180" marker-end="url(#arrow-intern)" />
+  <text x="730" y="395" text-anchor="middle" class="tiny" fill="#22c55e">libvirt bridge</text>
+
+  <!-- libvirt bridge label -->
+  <rect x="690" y="395" width="80" height="20" fill="#0f172a" stroke="#22c55e" stroke-width="1" rx="5" />
+  <text x="730" y="409" text-anchor="middle" class="tiny" fill="#22c55e">virbr0</text>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- Legend -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <rect class="zone" x="40" y="400" width="340" height="180" rx="12" />
+  <text x="60" y="422" class="small" font-weight="650">Legend</text>
+
+  <line class="edge-cf" x1="60" y1="440" x2="100" y2="440" marker-end="url(#arrow-cf)" />
+  <text x="110" y="444" class="small">Cloudflare path (mobile clients)</text>
+
+  <line class="edge-intern" x1="60" y1="465" x2="100" y2="465" marker-end="url(#arrow-intern)" />
+  <text x="110" y="469" class="small">Internal path (bots, no CF)</text>
+
+  <line class="edge" x1="60" y1="490" x2="100" y2="490" marker-end="url(#arrow)" />
+  <text x="110" y="494" class="small">Local service connection</text>
+
+  <rect x="60" y="510" width="15" height="15" fill="#0f766e" rx="3" />
+  <text x="82" y="522" class="small">Synapse (server)</text>
+
+  <rect x="60" y="530" width="15" height="15" fill="#1e3a5f" rx="3" />
+  <text x="82" y="542" class="small">AI Agent (bot)</text>
+
+  <rect x="60" y="550" width="15" height="15" fill="#6d28d9" rx="3" />
+  <text x="82" y="562" class="small">Mobile client (Element X)</text>
+
+  <rect x="200" y="510" width="15" height="15" fill="#b45309" rx="3" />
+  <text x="222" y="522" class="small">Cloudflare (tunnel)</text>
+
+  <rect x="200" y="530" width="15" height="15" fill="#334155" rx="3" />
+  <text x="222" y="542" class="small">PostgreSQL (DB)</text>
+
+  <rect x="200" y="550" width="15" height="15" fill="#0f172a" stroke="#22c55e" stroke-width="1" rx="3" />
+  <text x="222" y="562" class="small">Internal network zone</text>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- Arrow markers -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8" />
+    </marker>
+    <marker id="arrow-cf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b45309" />
+    </marker>
+    <marker id="arrow-intern" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#22c55e" />
+    </marker>
+  </defs>
+
+</svg>
+</main>

@@ -1,0 +1,8 @@
+version: "3.8"
+
+services:
+  synapse:
+    ports:
+      # Add internal interfaces for bots that should bypass Cloudflare.
+      # Example: libvirt NAT gateway for KVM guests on this host
+      - "<host-internal-ip>:8008:8008"

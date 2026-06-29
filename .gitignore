@@ -1,0 +1,28 @@
+# Postgres password — NEVER commit this!
+.env
+
+# Keep example templates tracked
+!.env.example
+
+# Synapse data (contains secrets, signing keys, config)
+synapse-data/*
+!synapse-data/.gitkeep
+
+# Backups
+backups/
+
+# Encrypted backup files
+*.gpg
+
+# Runtime
+*.log
+*.pid
+__pycache__/
+*.tar.gz
+
+# Cloudflare tunnel credentials
+*.json
+
+# Deployment-specific compose overrides (libvirt bridge, etc.)
+docker-compose.override.yml
+!docker-compose.override.yml.example
